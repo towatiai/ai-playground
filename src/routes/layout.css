@@ -1,1 +1,19 @@
 @import 'tailwindcss';
+
+body {
+	background-color: var(--color-neutral-900);
+	/*background-image: radial-gradient(
+		circle,
+		rgb(from var(--color-neutral-700) r g b / 0.8) 1px,
+		transparent 1px
+	);
+	background-size: 25px 25px;*/
+}
+
+/*body::after {
+	content: '';
+	display: block;
+	position: fixed;
+	inset: 0;
+	background: radial-gradient(var(--color-neutral-800), transparent);
+}*/
