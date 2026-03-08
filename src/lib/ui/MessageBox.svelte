@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Select, SelectItem } from '$lib/components/select';
+	import { autoResize } from '$lib/utils/autoResize';
 
 	let messageType = $state('system');
 </script>
@@ -21,7 +22,8 @@
 			</SelectItem>
 		</Select>
 	</div>
-	<div class="p-2.5">
-		<textarea class="w-full outline-none" rows="3" placeholder="Message"></textarea>
+	<div class="px-2.5 pt-2.5">
+		<textarea class="w-full outline-none" rows="3" placeholder="Message" {@attach autoResize}
+		></textarea>
 	</div>
 </div>

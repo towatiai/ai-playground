@@ -40,7 +40,11 @@
 		<ChevronExpand size="16" class="text-neutral-500" />
 	</BitsSelect.Trigger>
 	<BitsSelect.Portal>
-		<BitsSelect.Content {align} class="rounded-md border border-neutral-700 bg-neutral-800 p-1">
+		<BitsSelect.Content
+			sideOffset={2}
+			{align}
+			class="rounded-md border border-neutral-700 bg-neutral-800 p-1"
+		>
 			<BitsSelect.Viewport class="grid" style="grid-template-columns: 1fr auto;">
 				{#each ctx.items as item (item.value)}
 					<BitsSelect.Item
