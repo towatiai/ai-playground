@@ -35,7 +35,10 @@
 		"vite-plugin-devtools-json": "^1.0.0"
 	},
 	"dependencies": {
+		"@ai-sdk/openai": "^3.0.41",
+		"@ai-sdk/openai-compatible": "^2.0.35",
 		"@tauri-apps/api": "^2.10.1",
+		"ai": "^6.0.116",
 		"bits-ui": "^2.16.3",
 		"runed": "^0.37.1"
 	}
