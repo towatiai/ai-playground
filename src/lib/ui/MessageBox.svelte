@@ -1,13 +1,7 @@
 <script lang="ts">
-	import Select from '$lib/components/Select.svelte';
+	import { Select, SelectItem } from '$lib/components/select';
 
 	let messageType = $state('system');
-
-	const messageTypes = [
-		{ label: 'System', value: 'system' },
-		{ label: 'User', value: 'user' },
-		{ label: 'Assistant', value: 'assistant' }
-	];
 </script>
 
 <div
@@ -15,7 +9,17 @@
 	style="min-width: min(calc(100vw - 200px), 650px)"
 >
 	<div class="p-1">
-		<Select type="single" items={messageTypes} bind:value={messageType} />
+		<Select bind:value={messageType}>
+			<SelectItem value="system">
+				<span class="border-l-4 border-blue-500 pl-2">System</span>
+			</SelectItem>
+			<SelectItem value="user">
+				<span class="border-l-4 border-green-500 pl-2">User</span>
+			</SelectItem>
+			<SelectItem value="assistant">
+				<span class="border-l-4 border-yellow-500 pl-2">Assistant</span>
+			</SelectItem>
+		</Select>
 	</div>
 	<div class="p-2.5">
 		<textarea class="w-full outline-none" rows="3" placeholder="Message"></textarea>

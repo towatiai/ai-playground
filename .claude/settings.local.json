@@ -4,7 +4,9 @@
       "Bash(cargo:*)",
       "Bash(pnpm add:*)",
       "Bash(pnpm tauri:*)",
-      "Bash(brew upgrade:*)"
+      "Bash(brew upgrade:*)",
+      "mcp__svelte__svelte-autofixer",
+      "Bash(npx svelte-check --tsconfig ./tsconfig.json)"
     ]
   },
   "enableAllProjectMcpServers": true,
