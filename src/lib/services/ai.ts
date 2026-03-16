@@ -18,7 +18,12 @@ const LLAMA_PORT = 20000;
 
 let _openai: OpenAICompatibleProvider | null = null;
 
-export function llama() {
+type LlamaOptions = {
+	extractReasoning?: boolean;
+	startWithReasoning?: boolean;
+};
+
+export function llama({ extractReasoning = false, startWithReasoning = false }: LlamaOptions = {}) {
 	const languageModel = new OpenAICompatibleChatLanguageModel(model.current, {
 		provider: 'llama.cpp',
 		url: ({ path }) => `${BASE_URL}:${LLAMA_PORT}/v1${path}`,
@@ -26,11 +31,16 @@ export function llama() {
 		supportsStructuredOutputs: true
 	});
 
+	if (extractReasoning) {
+		return languageModel;
+	}
+
 	return wrapLanguageModel({
 		model: languageModel,
 		middleware: extractReasoningMiddleware({
 			tagName: 'think',
-			separator: '\n'
+			separator: '\n',
+			startWithReasoning
 		})
 	});
 }

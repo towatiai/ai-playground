@@ -23,12 +23,21 @@ importers:
       bits-ui:
         specifier: ^2.16.3
         version: 2.16.3(@internationalized/date@3.12.0)(@sveltejs/kit@2.53.0(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.53.1)(vite@7.3.1(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.1)(typescript@5.9.3)(vite@7.3.1(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.1)
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
       motion:
         specifier: ^12.35.1
         version: 12.35.1
+      nanoid:
+        specifier: ^5.1.6
+        version: 5.1.6
       runed:
         specifier: ^0.37.1
         version: 0.37.1(@sveltejs/kit@2.53.0(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.53.1)(vite@7.3.1(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.1)(typescript@5.9.3)(vite@7.3.1(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.1)(zod@4.3.6)
+      tailwind-merge:
+        specifier: ^3.5.0
+        version: 3.5.0
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^7.0.0
@@ -913,6 +922,11 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
+  nanoid@5.1.6:
+    resolution: {integrity: sha512-c7+7RQ+dMB5dPwwCp4ee1/iV/q2P6aK1mTZcfr1BTuVlyW9hJYiMPybJCcnBlQtuSmTIWNeazm/zqNoZSSElBg==}
+    engines: {node: ^18 || >=20}
+    hasBin: true
+
   obug@2.1.1:
     resolution: {integrity: sha512-uTqF9MuPraAQ+IsnPf366RG4cP9RtUi7MLO1N3KEc+wb0a6yKpeL0lmk2IB1jY5KHPAlTc6T/JRdC/YqxHNwkQ==}
 
@@ -1066,6 +1080,9 @@ packages:
 
   tabbable@6.4.0:
     resolution: {integrity: sha512-05PUHKSNE8ou2dwIxTngl4EzcnsCDZGJ/iCLtDflR/SHB/ny14rXc+qU5P4mG9JkusiV7EivzY9Mhm55AzAvCg==}
+
+  tailwind-merge@3.5.0:
+    resolution: {integrity: sha512-I8K9wewnVDkL1NTGoqWmVEIlUcB9gFriAEkXkfCjX5ib8ezGxtR3xD7iZIxrfArjEsH7F1CHD4RFUtxefdqV/A==}
 
   tailwindcss@4.2.0:
     resolution: {integrity: sha512-yYzTZ4++b7fNYxFfpnberEEKu43w44aqDMNM9MHMmcKuCH7lL8jJ4yJ7LGHv7rSwiqM0nkiobF9I6cLlpS2P7Q==}
@@ -1743,6 +1760,8 @@ snapshots:
 
   nanoid@3.3.11: {}
 
+  nanoid@5.1.6: {}
+
   obug@2.1.1: {}
 
   picocolors@1.1.1: {}
@@ -1883,6 +1902,8 @@ snapshots:
       zimmerframe: 1.1.4
 
   tabbable@6.4.0: {}
+
+  tailwind-merge@3.5.0: {}
 
   tailwindcss@4.2.0: {}
 
