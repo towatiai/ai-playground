@@ -6,7 +6,8 @@
       "Bash(pnpm tauri:*)",
       "Bash(brew upgrade:*)",
       "mcp__svelte__svelte-autofixer",
-      "Bash(npx svelte-check --tsconfig ./tsconfig.json)"
+      "Bash(npx svelte-check --tsconfig ./tsconfig.json)",
+      "Bash(find /Users/toni/Developer/ai-playground -maxdepth 2 -name \"$types*\" -type d)"
     ]
   },
   "enableAllProjectMcpServers": true,

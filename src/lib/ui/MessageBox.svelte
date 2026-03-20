@@ -1,17 +1,19 @@
 <script lang="ts">
 	import Button from '$lib/components/Button.svelte';
 	import { Select, SelectItem } from '$lib/components/select';
+	import { sortableContext } from '$lib/components/SortableItem.svelte';
 	import { messagesContext } from '$lib/services/Messages.svelte';
 	import { autoResize } from '$lib/utils/autoResize.svelte';
-	import { Close, Navigate } from 'svelte-ionicons';
+	import { Close, Navigate, ReorderThree } from 'svelte-ionicons';
 
 	let { message } = $props();
 
 	const ctx = messagesContext.get();
+	const sortableCtx = sortableContext.get();
 </script>
 
-<li class="divide-y divide-neutral-700 rounded-md border border-neutral-700 bg-neutral-800">
-	<div class="flex items-center justify-between p-1">
+<div class="divide-y divide-neutral-700 rounded-md border border-neutral-700 bg-neutral-800">
+	<div class="flex items-center justify-between p-1" {@attach sortableCtx().attachHandle}>
 		<Select bind:value={message.role}>
 			<SelectItem value="system">
 				<span class="border-l-4 border-blue-500 pl-2">System</span>
@@ -24,11 +26,13 @@
 			</SelectItem>
 		</Select>
 
-		{#if ctx.messages.length > 1}
-			<Button class="p-1" onClick={() => ctx.removeMessage(message)}>
-				<Close size="16" />
-			</Button>
-		{/if}
+		<div class="flex flex-1 justify-end gap-1">
+			{#if ctx.messages.length > 1}
+				<Button class="p-1" onclick={() => ctx.removeMessage(message)}>
+					<Close size="16" />
+				</Button>
+			{/if}
+		</div>
 	</div>
 	<div class="px-2.5 pt-2.5">
 		<textarea
@@ -49,4 +53,4 @@
 			</Button>
 		</div>
 	{/if}
-</li>
+</div>

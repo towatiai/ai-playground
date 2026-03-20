@@ -37,6 +37,9 @@
 	"dependencies": {
 		"@ai-sdk/openai": "^3.0.41",
 		"@ai-sdk/openai-compatible": "^2.0.35",
+		"@dnd-kit/helpers": "^0.3.2",
+		"@dnd-kit/svelte": "^0.3.2",
+		"@neodrag/svelte": "3.0.0-next.8",
 		"@tauri-apps/api": "^2.10.1",
 		"ai": "^6.0.116",
 		"bits-ui": "^2.16.3",

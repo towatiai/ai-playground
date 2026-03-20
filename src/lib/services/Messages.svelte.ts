@@ -22,7 +22,15 @@ export class Message {
 export class MessagesViewModel {
 	private isStreaming = false;
 
-	messages = $state<Message[]>([]);
+	private _messages = $state<Message[]>([]);
+
+	get messages() {
+		return this._messages;
+	}
+
+	set messages(value) {
+		this._messages = value;
+	}
 
 	constructor() {
 		this.messages = messageCache.current.length

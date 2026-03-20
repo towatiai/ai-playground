@@ -1,15 +1,16 @@
 <script lang="ts">
-	import { cn, noop } from '$lib/utils';
+	import { cn } from '$lib/utils';
+	import type { HTMLButtonAttributes } from 'svelte/elements';
 
-	let { children, class: className = '', onClick = noop } = $props();
+	let { children, class: className = '', ...props }: HTMLButtonAttributes = $props();
 </script>
 
 <button
-	onclick={onClick}
 	class={cn(
 		'flex cursor-pointer items-center gap-1 rounded-md bg-neutral-800 p-1 px-2 transition-colors hover:bg-neutral-700',
 		className
 	)}
+	{...props}
 >
-	{@render children()}
+	{@render children?.()}
 </button>
