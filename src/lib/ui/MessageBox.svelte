@@ -3,10 +3,11 @@
 	import { Popover } from '$lib/components/popover';
 	import { Select, SelectItem } from '$lib/components/select';
 	import { sortableContext } from '$lib/components/SortableItem.svelte';
+	import Switch from '$lib/components/Switch.svelte';
 	import { tools } from '$lib/resources/tools';
 	import { type Message, messagesContext } from '$lib/services/Messages.svelte';
 	import { autoResize } from '$lib/utils/autoResize.svelte';
-	import { Close, Hammer, Navigate } from 'svelte-ionicons';
+	import { Close, Hammer, Navigate, Settings } from 'svelte-ionicons';
 
 	let { message }: { message: Message } = $props();
 
@@ -62,9 +63,19 @@
 	{#if message.role === 'assistant'}
 		<div class="flex items-center justify-between p-1">
 			<Popover>
-				<Popover.Trigger>Generation options</Popover.Trigger>
-				<Popover.Content>
-					<p>foobar</p>
+				<Popover.Trigger>
+					<Settings size="16" />
+					Generation options
+				</Popover.Trigger>
+				<Popover.Content class="pl-3">
+					<div class="flex items-center justify-between gap-3">
+						<label for="force-tool-usage">Force tool usage</label>
+						<Switch
+							id="force-tool-usage"
+							bind:value={ctx.forceToolUsage}
+							disabled={ctx.tools.length === 0}
+						/>
+					</div>
 				</Popover.Content>
 			</Popover>
 

@@ -26,6 +26,14 @@ export class MessagesViewModel {
 
 	messages = $state<Message[]>([]);
 	tools = $state<(keyof typeof availableTools)[]>(toolCache.current ?? []);
+	_forceToolUsage = $state(false);
+
+	get forceToolUsage() {
+		return this._forceToolUsage;
+	}
+	set forceToolUsage(value: boolean) {
+		this._forceToolUsage = value;
+	}
 
 	constructor() {
 		this.messages = messageCache.current.length
@@ -72,6 +80,10 @@ export class MessagesViewModel {
 				},
 				{} as Record<string, any>
 			);
+		}
+
+		if (this.forceToolUsage) {
+			params.toolChoice = 'required';
 		}
 
 		const { textStream, ...result } = streamText(params);
