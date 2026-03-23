@@ -7,7 +7,13 @@
       "Bash(brew upgrade:*)",
       "mcp__svelte__svelte-autofixer",
       "Bash(npx svelte-check --tsconfig ./tsconfig.json)",
-      "Bash(find /Users/toni/Developer/ai-playground -maxdepth 2 -name \"$types*\" -type d)"
+      "Bash(find /Users/toni/Developer/ai-playground -maxdepth 2 -name \"$types*\" -type d)",
+      "Bash(grep -E \"\\\\.\\(svelte|ts|js\\)$\")",
+      "Bash(grep -r Select /Users/toni/Developer/ai-playground/src/lib --include=*.ts --include=*.js --include=*.svelte)",
+      "mcp__svelte__list-sections",
+      "WebFetch(domain:bits-ui.com)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

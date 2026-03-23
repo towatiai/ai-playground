@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Button from '$lib/components/Button.svelte';
+	import { Popover } from '$lib/components/popover';
 	import { Select, SelectItem } from '$lib/components/select';
 	import { sortableContext } from '$lib/components/SortableItem.svelte';
 	import { tools } from '$lib/resources/tools';
@@ -60,7 +61,13 @@
 
 	{#if message.role === 'assistant'}
 		<div class="flex items-center justify-between p-1">
-			<span></span>
+			<Popover>
+				<Popover.Trigger>Generation options</Popover.Trigger>
+				<Popover.Content>
+					<p>foobar</p>
+				</Popover.Content>
+			</Popover>
+
 			<Button class="py-0.5" onclick={() => ctx.generate(message)}>
 				<Navigate size="16" />
 				Generate
