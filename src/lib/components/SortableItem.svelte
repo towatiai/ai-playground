@@ -29,7 +29,6 @@
 
 <style>
 	li {
-		position: relative;
 		transition: scale 0.3s ease;
 	}
 </style>

@@ -1,7 +1,10 @@
 @import 'tailwindcss';
 
-body {
+html {
 	background-color: var(--color-neutral-900);
+}
+
+body {
 	color: var(--color-neutral-50);
 	font-size: 14px;
 	height: 100vh;
