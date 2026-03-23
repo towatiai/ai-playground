@@ -1,10 +1,12 @@
-import { streamText, type ModelMessage } from 'ai';
+import { streamText, tool, type ModelMessage } from 'ai';
 import { Context, PersistedState } from 'runed';
 import { llama } from './ai';
 import { sleep } from '$lib/utils';
 import { nanoid } from 'nanoid';
+import { tools as availableTools } from '$lib/resources/tools';
 
 const messageCache = new PersistedState<Omit<Message, 'id'>[]>('message-cache', []);
+const toolCache = new PersistedState<(keyof typeof availableTools)[]>('tool-cache', []);
 
 type Role = Exclude<ModelMessage['role'], 'tool'>;
 
@@ -22,15 +24,8 @@ export class Message {
 export class MessagesViewModel {
 	private isStreaming = false;
 
-	private _messages = $state<Message[]>([]);
-
-	get messages() {
-		return this._messages;
-	}
-
-	set messages(value) {
-		this._messages = value;
-	}
+	messages = $state<Message[]>([]);
+	tools = $state<(keyof typeof availableTools)[]>(toolCache.current ?? []);
 
 	constructor() {
 		this.messages = messageCache.current.length
@@ -44,6 +39,11 @@ export class MessagesViewModel {
 				role: m.role,
 				content: m.content
 			}));
+		});
+
+		$effect(() => {
+			if (this.isStreaming) return;
+			toolCache.current = this.tools;
 		});
 	}
 
@@ -59,10 +59,22 @@ export class MessagesViewModel {
 		message.content = '';
 		const messages = this.messages.slice(0, this.messages.indexOf(message));
 
-		const { textStream, ...result } = streamText({
+		const params: Parameters<typeof streamText>[0] = {
 			model: llama(),
 			messages: messages
-		});
+		};
+
+		if (this.tools.length) {
+			params.tools = this.tools.reduce(
+				(acc, key) => {
+					acc[key] = tool(availableTools[key]);
+					return acc;
+				},
+				{} as Record<string, any>
+			);
+		}
+
+		const { textStream, ...result } = streamText(params);
 
 		this.isStreaming = true;
 		for await (const textPart of textStream) {

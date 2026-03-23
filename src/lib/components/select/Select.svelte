@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Select as BitsSelect } from 'bits-ui';
+	import { Select as BitsSelect, type SelectSingleRootProps } from 'bits-ui';
 	import { Checkmark, ChevronExpand } from 'svelte-ionicons';
 	import { selectContext, SelectContext } from './select.ctx.svelte';
 	import type { Snippet } from 'svelte';
@@ -17,7 +17,7 @@
 		align = 'start',
 		children,
 		...restProps
-	}: Props = $props();
+	}: Props & Partial<SelectSingleRootProps> = $props();
 
 	const ctx = selectContext.set(new SelectContext());
 
