@@ -1,32 +1,23 @@
 <script lang="ts">
 	import Button from '$lib/components/Button.svelte';
-	import { Popover } from '$lib/components/popover';
+	import { DropdownMenu } from '$lib/components/dropdown-menu';
 	import { Select, SelectItem } from '$lib/components/select';
 	import { sortableContext } from '$lib/components/SortableItem.svelte';
 	import Switch from '$lib/components/Switch.svelte';
 	import { tools } from '$lib/resources/tools';
 	import { type Message, messagesContext } from '$lib/services/Messages.svelte';
 	import { autoResize } from '$lib/utils/autoResize.svelte';
-	import { Close, Hammer, Navigate, Settings } from 'svelte-ionicons';
+	import { Checkmark, Close, Hammer, Navigate } from 'svelte-ionicons';
 
 	let { message }: { message: Message } = $props();
 
 	const ctx = messagesContext.get();
 	const sortableCtx = sortableContext.get();
-
-	let tool = $state<string | undefined>(undefined);
-
-	function onToolSelected(value: string) {
-		if (value) {
-			ctx.tools.push(value as keyof typeof tools);
-			tool = undefined;
-		}
-	}
 </script>
 
 <div class="divide-y divide-neutral-700 rounded-md border border-neutral-700 bg-neutral-800">
 	<div class="flex items-center justify-between p-1">
-		<Select bind:value={message.role}>
+		<Select type="single" bind:value={message.role}>
 			{#if ctx.messages.indexOf(message) === 0 && ctx.messages.filter((m) => m.role === 'system').length <= 1}
 				<SelectItem value="system">
 					<span class="border-l-4 border-blue-500 pl-2">System</span>
@@ -62,66 +53,46 @@
 
 	{#if message.role === 'assistant' && ctx.messages.indexOf(message) === ctx.messages.length - 1}
 		<div class="flex items-center justify-between p-1">
-			<Popover>
-				<Popover.Trigger>
-					<Settings size="16" />
-					Generation options
-				</Popover.Trigger>
-				<Popover.Content class="pl-3">
-					<div class="flex items-center justify-between gap-3">
-						<label for="force-tool-usage">Force tool usage</label>
-						<Switch
-							id="force-tool-usage"
-							bind:value={ctx.forceToolUsage}
-							disabled={ctx.tools.length === 0}
-						/>
-					</div>
-				</Popover.Content>
-			</Popover>
+			<DropdownMenu>
+				<DropdownMenu.Trigger class="flex items-center gap-1.5">
+					<Hammer size="16" />
+					Tools
+					{#if ctx.tools.length > 0}
+						<span>
+							({ctx.tools.length})
+						</span>
+					{/if}
+				</DropdownMenu.Trigger>
+
+				<DropdownMenu.Content>
+					<DropdownMenu.CheckboxItem bind:checked={ctx.forceToolUsage}>
+						{#snippet children({ checked })}
+							Force usage
+							<Switch value={checked} />
+						{/snippet}
+					</DropdownMenu.CheckboxItem>
+
+					<DropdownMenu.Separator />
+
+					<DropdownMenu.CheckboxGroup bind:value={ctx.tools}>
+						{#each Object.keys(tools) as tool}
+							<DropdownMenu.CheckboxItem value={tool} class="flex items-center justify-between">
+								{#snippet children({ checked })}
+									{tool}
+									{#if checked}
+										<Checkmark size="16" />
+									{/if}
+								{/snippet}
+							</DropdownMenu.CheckboxItem>
+						{/each}
+					</DropdownMenu.CheckboxGroup>
+				</DropdownMenu.Content>
+			</DropdownMenu>
 
 			<Button class="py-0.5" onclick={() => ctx.generate(message)}>
 				<Navigate size="16" />
 				Generate
 			</Button>
-		</div>
-	{/if}
-
-	{#if message.role === 'system'}
-		<div class="flex flex-wrap items-center gap-2.5 p-1">
-			{#each ctx.tools as tool}
-				<button
-					onclick={() => (ctx.tools = ctx.tools.filter((t) => t !== tool))}
-					class="group cursor-pointer rounded-sm px-1.5 py-0.5 transition-colors hover:bg-neutral-700"
-				>
-					<span class="flex items-center gap-1.5">
-						<span class="relative size-4">
-							<Close
-								size="16"
-								class="absolute top-0 left-0 opacity-0 transition-opacity group-hover:opacity-100"
-							/>
-							<Hammer
-								size="16"
-								class="absolute top-0 left-0 opacity-100 transition-opacity group-hover:opacity-0"
-							/>
-						</span>
-
-						{tool}
-					</span>
-				</button>
-			{/each}
-
-			{#if ctx.tools.length < Object.keys(tools).length}
-				<Select placeholder="Add tool" bind:value={tool} onValueChange={onToolSelected}>
-					{#each Object.keys(tools).filter((t) => !ctx.tools.includes(t as keyof typeof tools)) as key (key)}
-						<SelectItem value={key}>
-							<span class="flex items-center gap-1.5">
-								<Hammer size="16" />
-								{key}
-							</span>
-						</SelectItem>
-					{/each}
-				</Select>
-			{/if}
 		</div>
 	{/if}
 </div>

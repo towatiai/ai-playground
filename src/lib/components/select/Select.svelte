@@ -1,38 +1,46 @@
 <script lang="ts">
-	import { Select as BitsSelect, type SelectSingleRootProps } from 'bits-ui';
+	import { Select as BitsSelect, type Select } from 'bits-ui';
 	import { Checkmark, ChevronExpand } from 'svelte-ionicons';
 	import { selectContext, SelectContext } from './select.ctx.svelte';
-	import type { Snippet } from 'svelte';
 
-	type Props = {
-		value?: string;
+	type Props = Select.RootProps & {
 		placeholder?: string;
 		align?: 'start' | 'center' | 'end';
-		children: Snippet;
 	};
 
 	let {
+		type = 'single',
 		value = $bindable(),
 		placeholder,
 		align = 'start',
 		children,
 		...restProps
-	}: Props & Partial<SelectSingleRootProps> = $props();
+	}: Props = $props();
 
 	const ctx = selectContext.set(new SelectContext());
 
 	$effect(() => {
+		ctx.type = type;
 		ctx.value = value;
 	});
 </script>
 
-{@render children()}
+{@render children?.()}
 
-<BitsSelect.Root type="single" bind:value {...restProps}>
+<BitsSelect.Root type={type as never} bind:value={value as never} {...restProps}>
 	<BitsSelect.Trigger
 		class="flex cursor-pointer items-center gap-1 rounded-sm py-0.5 pr-0.5 pl-1.5 transition-colors hover:bg-neutral-700 data-[state=open]:bg-neutral-700"
 	>
-		{#if ctx.selectedSnippet}
+		{#if type === 'multiple'}
+			{#if ctx.selectedSnippets.length > 0}
+				{#each ctx.selectedSnippets as snippet, i (i)}
+					{#if i > 0}<span class="text-neutral-500">,&nbsp;</span>{/if}
+					{@render snippet()}
+				{/each}
+			{:else}
+				{placeholder}
+			{/if}
+		{:else if ctx.selectedSnippet}
 			{@render ctx.selectedSnippet()}
 		{:else}
 			{placeholder}

@@ -8,7 +8,8 @@ export type SelectItemData = {
 };
 
 export class SelectContext {
-	value = $state<string>();
+	type = $state<'single' | 'multiple'>('single');
+	value = $state<string | string[] | undefined>();
 	items = $state<SelectItemData[]>([]);
 
 	register(value: string, snippet: Snippet, disabled?: boolean) {
@@ -22,8 +23,16 @@ export class SelectContext {
 	}
 
 	get selectedSnippet(): Snippet | undefined {
-		if (this.value === undefined) return undefined;
+		if (this.type !== 'single' || this.value === undefined || Array.isArray(this.value))
+			return undefined;
 		return this.items.find((item) => item.value === this.value)?.snippet;
+	}
+
+	get selectedSnippets(): Snippet[] {
+		if (this.type !== 'multiple' || !Array.isArray(this.value)) return [];
+		return this.items
+			.filter((item) => (this.value as string[]).includes(item.value))
+			.map((item) => item.snippet);
 	}
 }
 

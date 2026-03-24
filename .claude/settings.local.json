@@ -13,7 +13,8 @@
       "mcp__svelte__list-sections",
       "WebFetch(domain:bits-ui.com)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(curl -s \"https://bits-ui.com/docs/components/dropdown-menu/llms.txt\")"
     ]
   },
   "enableAllProjectMcpServers": true,
