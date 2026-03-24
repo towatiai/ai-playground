@@ -60,7 +60,7 @@
 		></textarea>
 	</div>
 
-	{#if message.role === 'assistant'}
+	{#if message.role === 'assistant' && ctx.messages.indexOf(message) === ctx.messages.length - 1}
 		<div class="flex items-center justify-between p-1">
 			<Popover>
 				<Popover.Trigger>

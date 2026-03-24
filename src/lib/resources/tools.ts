@@ -3,7 +3,9 @@ import { z } from 'zod';
 
 export const celebrity = {
 	description: 'Get information about a celebrity.',
-	inputSchema: z.string()
+	inputSchema: z.object({
+		name: z.string().describe('The name of the celebrity.')
+	})
 } satisfies Tool;
 
 export const ready = {

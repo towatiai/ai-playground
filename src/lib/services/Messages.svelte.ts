@@ -1,4 +1,4 @@
-import { streamText, tool, type ModelMessage } from 'ai';
+import { smoothStream, streamText, tool, type ModelMessage } from 'ai';
 import { Context, PersistedState } from 'runed';
 import { llama } from './ai';
 import { sleep } from '$lib/utils';
@@ -69,7 +69,8 @@ export class MessagesViewModel {
 
 		const params: Parameters<typeof streamText>[0] = {
 			model: llama(),
-			messages: messages
+			messages: messages,
+			experimental_transform: smoothStream()
 		};
 
 		if (this.tools.length) {
@@ -86,18 +87,17 @@ export class MessagesViewModel {
 			params.toolChoice = 'required';
 		}
 
-		const { textStream, ...result } = streamText(params);
+		const result = streamText(params);
 
 		this.isStreaming = true;
-		for await (const textPart of textStream) {
+		for await (const textPart of result.textStream) {
 			message.content = message.content + textPart;
-			await sleep(16);
 		}
 
 		this.isStreaming = false;
 		messageCache.current = this.messages.map((m) => ({ role: m.role, content: m.content }));
 
-		console.log(result);
+		console.log(await result.toolCalls);
 	}
 }
 
