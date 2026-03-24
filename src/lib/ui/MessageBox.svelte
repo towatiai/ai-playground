@@ -67,7 +67,7 @@
 				<DropdownMenu.Content>
 					<DropdownMenu.CheckboxItem bind:checked={ctx.forceToolUsage}>
 						{#snippet children({ checked })}
-							Force usage
+							Choice required
 							<Switch value={checked} />
 						{/snippet}
 					</DropdownMenu.CheckboxItem>

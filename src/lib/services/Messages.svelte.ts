@@ -1,7 +1,6 @@
 import { smoothStream, streamText, tool, type ModelMessage } from 'ai';
 import { Context, PersistedState } from 'runed';
 import { llama } from './ai';
-import { sleep } from '$lib/utils';
 import { nanoid } from 'nanoid';
 import { tools as availableTools } from '$lib/resources/tools';
 
@@ -91,7 +90,7 @@ export class MessagesViewModel {
 
 		this.isStreaming = true;
 		for await (const textPart of result.textStream) {
-			message.content = message.content + textPart;
+			message.content += textPart;
 		}
 
 		this.isStreaming = false;
