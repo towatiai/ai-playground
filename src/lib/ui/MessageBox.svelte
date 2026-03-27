@@ -29,9 +29,16 @@
 			<SelectItem value="assistant">
 				<span class="border-l-4 border-yellow-500 pl-2">Assistant</span>
 			</SelectItem>
+			<SelectItem value="tool">
+				<span class="border-l-4 border-white pl-2">Tool</span>
+			</SelectItem>
 		</Select>
 
-		<div class="h-6 flex-1" {@attach sortableCtx().attachHandle}></div>
+		<div class="h-6 flex-1" {@attach sortableCtx().attachHandle}>
+			{#if message.toolCallId}
+				<span class="px-2 font-mono text-sm text-neutral-500">{message.toolCallId}</span>
+			{/if}
+		</div>
 
 		<div class="flex justify-end gap-1">
 			{#if ctx.messages.length > 1}
@@ -41,15 +48,36 @@
 			{/if}
 		</div>
 	</div>
-	<div class="px-2.5 pt-2.5">
-		<textarea
-			bind:value={message.content}
-			class="w-full outline-none"
-			rows="3"
-			placeholder="Message"
-			{@attach autoResize(message.content)}
-		></textarea>
-	</div>
+	{#if message.toolCalls.length > 0}
+		<div class="flex flex-col gap-2 p-2.5">
+			{#each message.toolCalls as tc (tc.toolCallId)}
+				<div class="rounded border border-neutral-600 bg-neutral-900 text-sm">
+					<div class="flex items-center gap-1.5 border-b border-neutral-600 py-1 pr-1 pl-2.5">
+						<Hammer size="14" class="shrink-0 text-yellow-400" />
+						<span class="font-mono font-semibold text-yellow-400">{tc.toolName}</span>
+						<span class="flex-1"></span>
+						<Button
+							class="self-end bg-neutral-900 hover:bg-neutral-800"
+							onclick={() => ctx.addToolMessage(tc.toolCallId)}
+						>
+							Add response
+						</Button>
+					</div>
+					<pre class="overflow-x-auto px-2.5 py-2 text-xs text-neutral-300">{tc.input}</pre>
+				</div>
+			{/each}
+		</div>
+	{:else}
+		<div class="px-2.5 pt-2.5">
+			<textarea
+				bind:value={message.content}
+				class="w-full outline-none"
+				rows="3"
+				placeholder="Message"
+				{@attach autoResize(message.content)}
+			></textarea>
+		</div>
+	{/if}
 
 	{#if message.role === 'assistant' && ctx.messages.indexOf(message) === ctx.messages.length - 1}
 		<div class="flex items-center justify-between p-1">
@@ -75,7 +103,7 @@
 					<DropdownMenu.Separator />
 
 					<DropdownMenu.CheckboxGroup bind:value={ctx.tools}>
-						{#each Object.keys(tools) as tool}
+						{#each Object.keys(tools) as tool (tool)}
 							<DropdownMenu.CheckboxItem value={tool} class="flex items-center justify-between">
 								{#snippet children({ checked })}
 									{tool}

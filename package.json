@@ -47,6 +47,7 @@
 		"motion": "^12.35.1",
 		"nanoid": "^5.1.6",
 		"runed": "^0.37.1",
+		"silky-svelte": "link:../../Library/pnpm/global/5/node_modules/silky-svelte",
 		"tailwind-merge": "^3.5.0",
 		"zod": "^4.3.6"
 	}

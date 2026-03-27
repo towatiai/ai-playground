@@ -1,27 +1,97 @@
-import { smoothStream, streamText, tool, type ModelMessage } from 'ai';
+import {
+	smoothStream,
+	streamText,
+	tool,
+	type AssistantModelMessage,
+	type ModelMessage,
+	type SystemModelMessage,
+	type ToolCallPart,
+	type ToolModelMessage,
+	type ToolResultPart,
+	type UserModelMessage
+} from 'ai';
 import { Context, PersistedState } from 'runed';
 import { llama } from './ai';
 import { nanoid } from 'nanoid';
 import { tools as availableTools } from '$lib/resources/tools';
 
-const messageCache = new PersistedState<Omit<Message, 'id'>[]>('message-cache', []);
+const messageCache = new PersistedState<Omit<Message, 'id' | 'toModelMessage'>[]>(
+	'message-cache',
+	[]
+);
 const toolCache = new PersistedState<(keyof typeof availableTools)[]>('tool-cache', []);
 
-type Role = Exclude<ModelMessage['role'], 'tool'>;
+type Role = ModelMessage['role'];
+
+export type ToolCall = {
+	toolName: string;
+	input: string;
+	toolCallId: string;
+};
 
 export class Message {
 	id = nanoid();
 	role = $state<Role>('user');
 	content = $state('');
+	toolCalls = $state<ToolCall[]>([]);
+	toolCallId: string = '';
 
-	constructor(role: Role = 'user', content: string = '') {
-		this.role = role;
-		this.content = content;
+	constructor(m: Partial<Omit<Message, 'id'>>) {
+		this.role = m.role ?? 'user';
+		this.content = m.content ?? '';
+		this.toolCalls = m.toolCalls ?? [];
+		this.toolCallId = m.toolCallId ?? '';
+	}
+
+	toModelMessage() {
+		if (this.role === 'user' || this.role === 'system') {
+			return {
+				role: this.role,
+				content: this.content
+			} satisfies UserModelMessage | SystemModelMessage;
+		}
+
+		if (this.role === 'assistant') {
+			if (this.toolCalls?.length) {
+				return {
+					role: this.role,
+					content: [
+						{
+							type: 'tool-call',
+							toolCallId: this.toolCalls[0].toolCallId,
+							toolName: this.toolCalls[0].toolName,
+							input: this.toolCalls[0].input
+						} satisfies ToolCallPart
+					]
+				} satisfies AssistantModelMessage;
+			}
+			return {
+				role: this.role,
+				content: this.content
+			} satisfies AssistantModelMessage;
+		}
+
+		if (this.role === 'tool') {
+			return {
+				role: this.role,
+				content: [
+					{
+						type: 'tool-result',
+						toolCallId: this.toolCallId,
+						toolName: 'celebrity',
+						output: {
+							type: 'text',
+							value: this.content
+						}
+					} satisfies ToolResultPart
+				]
+			} satisfies ToolModelMessage;
+		}
 	}
 }
 
 export class MessagesViewModel {
-	private isStreaming = false;
+	private isStreaming = $state(false);
 
 	messages = $state<Message[]>([]);
 	tools = $state<(keyof typeof availableTools)[]>(toolCache.current ?? []);
@@ -36,15 +106,16 @@ export class MessagesViewModel {
 
 	constructor() {
 		this.messages = messageCache.current.length
-			? messageCache.current.map((m) => new Message(m.role, m.content))
-			: [new Message('system')];
+			? messageCache.current.map((m) => new Message(m))
+			: [new Message({ role: 'system' })];
 
 		$effect(() => {
 			if (this.isStreaming) return;
 			messageCache.current = this.messages.map((m) => ({
-				id: m.id,
 				role: m.role,
-				content: m.content
+				content: m.content,
+				toolCalls: m.toolCalls,
+				toolCallId: m.toolCallId
 			}));
 		});
 
@@ -55,7 +126,12 @@ export class MessagesViewModel {
 	}
 
 	addMessage(role: Role) {
-		this.messages.push(new Message(role));
+		this.messages.push(new Message({ role }));
+	}
+
+	addToolMessage(toolCallId: string) {
+		const mes = new Message({ role: 'tool', toolCallId });
+		this.messages.push(mes);
 	}
 
 	removeMessage(message: Message) {
@@ -64,12 +140,18 @@ export class MessagesViewModel {
 
 	async generate(message: Message) {
 		message.content = '';
-		const messages = this.messages.slice(0, this.messages.indexOf(message));
+		message.toolCalls = [];
+		const messages = this.messages
+			.slice(0, this.messages.indexOf(message))
+			.map((m) => m.toModelMessage());
+
+		console.log(messages);
 
 		const params: Parameters<typeof streamText>[0] = {
 			model: llama(),
 			messages: messages,
-			experimental_transform: smoothStream()
+			experimental_transform: smoothStream(),
+			maxOutputTokens: 500
 		};
 
 		if (this.tools.length) {
@@ -93,10 +175,25 @@ export class MessagesViewModel {
 			message.content += textPart;
 		}
 
+		message.content = await result.text;
+		console.log(await result.text);
 		this.isStreaming = false;
-		messageCache.current = this.messages.map((m) => ({ role: m.role, content: m.content }));
 
-		console.log(await result.toolCalls);
+		const toolCalls = await result.toolCalls;
+		if (toolCalls.length) {
+			message.toolCalls = toolCalls.map((tc) => ({
+				toolName: tc.toolName,
+				input: JSON.stringify(tc.input, null, 2),
+				toolCallId: tc.toolCallId.substring(0, 9)
+			}));
+		}
+
+		messageCache.current = this.messages.map((m) => ({
+			role: m.role,
+			content: m.content,
+			toolCalls: m.toolCalls,
+			toolCallId: m.toolCallId
+		}));
 	}
 }
 
