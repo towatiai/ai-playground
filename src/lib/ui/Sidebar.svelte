@@ -13,10 +13,12 @@
 	<Sheet.Portal>
 		<Sheet.View placement={'left'}>
 			<Sheet.Backdrop class="bg-black/50" />
-			<Sheet.Content class="h-screen w-75 p-4">
-				<Sheet.BleedingBackground class="bg-neutral-800" />
-				<div>
-					<h1>ai-playground</h1>
+			<Sheet.Content class="h-screen w-75 p-3">
+				<div class="h-full rounded-md border border-neutral-700 bg-neutral-800 p-2">
+					<h1 class="flex text-lg font-semibold">
+						<span class="text-orange-500">ai</span>
+						<span>playground</span>
+					</h1>
 				</div>
 			</Sheet.Content>
 		</Sheet.View>
